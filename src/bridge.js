@@ -181,6 +181,7 @@ export class WhatsMeowBridge extends EventEmitter {
           id: raw.id,
           chat: raw.chat || "",
           senderJid: raw.senderJid || "",
+          senderPN: raw.senderPN || "",
           pushName: raw.pushName || "",
           body: raw.body || "",
           type: raw.type || "Chat",
@@ -194,8 +195,10 @@ export class WhatsMeowBridge extends EventEmitter {
       }
 
       if (m && raw) {
+        m.senderPN = raw.senderPN || "";
         m.quotedId = raw.quotedId || "";
         m.quotedSender = raw.quotedSender || "";
+        m.quotedSenderPN = raw.quotedSenderPN || "";
         m.quotedType = raw.quotedType || "";
         m.quotedText = raw.quotedText || "";
 
@@ -208,6 +211,10 @@ export class WhatsMeowBridge extends EventEmitter {
 
             if (!m.quotedSender) {
               m.quotedSender = quoted.senderJid || "";
+            }
+
+            if (!m.quotedSenderPN) {
+              m.quotedSenderPN = quoted.senderPN || "";
             }
           }
         }
