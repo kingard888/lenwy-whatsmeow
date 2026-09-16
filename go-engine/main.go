@@ -411,36 +411,39 @@ func main() {
 
 			// Prioritaskan PNJID (Phone Number JID)
 			senderJID := v.Info.Sender.ToNonAD()
-senderPN := senderJID
+			senderPN := senderJID.String()
 
-if v.Info.Sender.Server == types.HiddenUserServer {
-	if pn, err := client.Store.LIDs.GetPNForLID(ctx, v.Info.Sender); err == nil && !pn.IsEmpty() {
-		senderPN = pn.ToNonAD()
-	}
-}
+			if v.Info.Sender.Server == types.HiddenUserServer {
+				pn, err := client.Store.LIDs.GetPNForLID(ctx, v.Info.Sender)
+					if err == nil && !pn.IsEmpty() {
+							senderPN = pn.String()
+								}
+								}
 
-quotedSenderPN := types.EmptyJID()
+								quotedSenderPN := ""
 
-if quotedSender != "" {
-	if quotedJID, err := types.ParseJID(quotedSender); err == nil {
-		quotedJID = quotedJID.ToNonAD()
+								if quotedSender != "" {
+									quotedJID, err := types.ParseJID(quotedSender)
 
-		if quotedJID.Server == types.HiddenUserServer {
-			if pn, err := client.Store.LIDs.GetPNForLID(ctx, quotedJID); err == nil && !pn.IsEmpty() {
-				quotedSenderPN = pn.ToNonAD()
-			}
-		} else {
-			quotedSenderPN = quotedJID
-		}
-	}
-}
+										if err == nil {
+												if quotedJID.Server == types.HiddenUserServer {
+															pn, err := client.Store.LIDs.GetPNForLID(ctx, quotedJID)
+
+																		if err == nil && !pn.IsEmpty() {
+																						quotedSenderPN = pn.String()
+																									}
+																											} else {
+																														quotedSenderPN = quotedJID.String()
+																																}
+																																	}
+																																	}
 
 			sendIPC("messages.upsert", map[string]interface{}{
 				"id":             v.Info.ID,
 				"chat":           v.Info.Chat.String(),
 				"sender":         senderJID.User,
 				"senderJid":      senderJID.String(),
-				"senderPN":       senderPN.String(),
+				"senderPN":       senderPN,
 				"pushName":       v.Info.PushName,
 				"isFromMe":       v.Info.IsFromMe,
 				"timestamp":      v.Info.Timestamp.Unix(),
@@ -448,7 +451,7 @@ if quotedSender != "" {
 				"body":           body,
 				"quotedId":       quotedID,
 				"quotedSender":   quotedSender,
-				"quotedSenderPN": quotedSenderPN.String(),
+				"quotedSenderPN": quotedSenderPN,
 				"quotedType":     quotedType,
 				"quotedText":     quotedText,
 				"botJid":         botJid,
