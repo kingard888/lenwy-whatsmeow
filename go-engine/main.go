@@ -1667,16 +1667,17 @@ func main() {
 
 						msg = &waProto.Message{
 							VideoMessage: &waProto.VideoMessage{
-								URL:           &uploadResp.URL,
-								DirectPath:    &uploadResp.DirectPath,
-								MediaKey:      uploadResp.MediaKey,
-								FileSHA256:    uploadResp.FileSHA256,
-								FileEncSHA256: uploadResp.FileEncSHA256,
-								FileLength:    &fileLen,
-								Mimetype:      &mimeVideo,
-								Caption:       &p.Caption,
-								ContextInfo:   contextInfo,
-							},
+	URL:           &uploadResp.URL,
+	DirectPath:    &uploadResp.DirectPath,
+	MediaKey:      uploadResp.MediaKey,
+	FileSHA256:    uploadResp.FileSHA256,
+	FileEncSHA256: uploadResp.FileEncSHA256,
+	FileLength:    &fileLen,
+	Mimetype:      &mimeVideo,
+	Caption:       &p.Caption,
+	GifPlayback:   &p.GifPlayback,
+	ContextInfo:   contextInfo,
+},
 						}
 
 					case "audio", "sound", "ptt":
