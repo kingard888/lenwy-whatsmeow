@@ -411,22 +411,47 @@ func main() {
 
 			// Prioritaskan PNJID (Phone Number JID)
 			senderJID := v.Info.Sender.ToNonAD()
+senderPN := senderJID
+
+if v.Info.Sender.Server == types.HiddenUserServer {
+	if pn, err := client.Store.LIDs.GetPNForLID(ctx, v.Info.Sender); err == nil && !pn.IsEmpty() {
+		senderPN = pn.ToNonAD()
+	}
+}
+
+quotedSenderPN := types.EmptyJID()
+
+if quotedSender != "" {
+	if quotedJID, err := types.ParseJID(quotedSender); err == nil {
+		quotedJID = quotedJID.ToNonAD()
+
+		if quotedJID.Server == types.HiddenUserServer {
+			if pn, err := client.Store.LIDs.GetPNForLID(ctx, quotedJID); err == nil && !pn.IsEmpty() {
+				quotedSenderPN = pn.ToNonAD()
+			}
+		} else {
+			quotedSenderPN = quotedJID
+		}
+	}
+}
 
 			sendIPC("messages.upsert", map[string]interface{}{
-				"id":           v.Info.ID,
-				"chat":         v.Info.Chat.String(),
-				"sender":       senderJID.User,
-				"senderJid":    senderJID.String(),
-				"pushName":     v.Info.PushName,
-				"isFromMe":     v.Info.IsFromMe,
-				"timestamp":    v.Info.Timestamp.Unix(),
-				"type":         msgType,
-				"body":         body,
-				"quotedId":     quotedID,
-				"quotedSender": quotedSender,
-				"quotedType":   quotedType,
-				"quotedText":   quotedText,
-				"botJid":       botJid,
+				"id":             v.Info.ID,
+				"chat":           v.Info.Chat.String(),
+				"sender":         senderJID.User,
+				"senderJid":      senderJID.String(),
+				"senderPN":       senderPN.String(),
+				"pushName":       v.Info.PushName,
+				"isFromMe":       v.Info.IsFromMe,
+				"timestamp":      v.Info.Timestamp.Unix(),
+				"type":           msgType,
+				"body":           body,
+				"quotedId":       quotedID,
+				"quotedSender":   quotedSender,
+				"quotedSenderPN": quotedSenderPN.String(),
+				"quotedType":     quotedType,
+				"quotedText":     quotedText,
+				"botJid":         botJid,
 			})
 		}
 	})
